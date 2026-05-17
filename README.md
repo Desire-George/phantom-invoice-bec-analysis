@@ -1,4 +1,4 @@
-# 📧 Operation: Phantom Invoice — BEC Forensic Analysis
+<img width="975" height="183" alt="image" src="https://github.com/user-attachments/assets/6e41d1eb-72e8-43a9-a28e-f55f7fa10d53" /># 📧 Operation: Phantom Invoice — BEC Forensic Analysis
 
 ## 🗂️ Overview
 
@@ -29,10 +29,11 @@ Two distinct sending addresses were identified across the three emails:
 - `j.hargrove@nexus-logistics.com` — Email1 & Email3, impersonating the CFO
 - `billing@meridianfreight-solutions.net` — Email2, impersonating the vendor
 
-Both addresses share the same underlying SMTP relay (`smtp.webmailpro.xyz`), strongly suggesting a single threat actor operating both identities. Both domains are lookalikes engineered to pass a quick visual inspection of a legitimate organisation name.
+Both addresses share the same underlying SMTP relay (`smtp.webmailpro.xyz`), strongly suggesting a single threat actor operating both identities. Both domains are lookalikes engineered to pass a quick visual inspection of a legitimate organisation name. 
+nexus-Iogistics.com impersonates the legitimate nexuslogistics.com by substituting a capital letter 'I' (eye) in place of a lowercase 'l' (ell) in the word 'logistics'. This is a classic homoglyph substitution attack, visually indistinguishable at a glance in most email clients.
 
-![Sending addresses across all three emails](screenshots/01_sending_addresses.png)
-*Screenshot: From headers across Email1, Email2, and Email3 showing the two lookalike domains*
+<img width="975" height="107" alt="image" src="https://github.com/user-attachments/assets/f23fbdae-9d22-4aae-a7c6-d9af6b63d884" />
+<img width="975" height="54" alt="image" src="https://github.com/user-attachments/assets/7eb59a36-4be9-4c7d-a614-0b64bff7b17a" />
 
 ---
 
@@ -46,8 +47,8 @@ Critical mismatches were found in all three emails:
 
 This divergence between the displayed sender and the actual mail routing path is definitive evidence of email spoofing, and confirms both identities share one sending infrastructure.
 
-![Header discrepancy — From vs Reply-To vs Return-Path](screenshots/02_header_discrepancy.png)
-*Screenshot: Raw headers showing the mismatch between From, Reply-To, and Return-Path fields*
+<img width="850" height="93" alt="image" src="https://github.com/user-attachments/assets/60601006-b99a-41f1-89fe-29e188e207cb" />
+<img width="975" height="107" alt="image" src="https://github.com/user-attachments/assets/e7a623f5-5f60-4c3a-8835-428617765310" />
 
 ---
 
@@ -59,8 +60,8 @@ None of the three emails passed any authentication check.
 - **DKIM:** No valid signatures found — message integrity cannot be cryptographically verified
 - **DMARC:** Failed for all three, yet emails were still delivered due to a missing enforce policy on the target organisation's email gateway
 
-![Authentication results from email headers](screenshots/03_auth_results.png)
-*Screenshot: Authentication-Results header from one of the emails showing SPF fail, no DKIM, DMARC fail*
+<img width="975" height="107" alt="image" src="https://github.com/user-attachments/assets/98268b63-22e6-417d-a945-ba8c7db4f9e3" />
+<img width="975" height="107" alt="image" src="https://github.com/user-attachments/assets/f40bf953-3fd6-4499-a144-40925f483a75" />
 
 ---
 
@@ -74,14 +75,19 @@ Three internal relay IPs were also observed in the Received headers:
 - `10.0.0.22` — internal relay, Email2 (RFC 1918, not attacker infrastructure)
 - `172.16.0.55` — internal relay, Email3 (RFC 1918, not attacker infrastructure)
 
-![IP geolocation lookup for 185.234.219.101](screenshots/04_ip_geolocation.png)
-*Screenshot: iplocation.net or similar tool showing 185.234.219.101 resolving to Vienna, Austria*
+<img width="975" height="454" alt="image" src="https://github.com/user-attachments/assets/c1829d7c-8eee-4461-b8ac-bdf1f7508d35" />
 
 ---
 
 ### 5. Links and Attachments
 
-No URLs, hyperlinks, or file attachments were identified in any of the three emails. The attack relied entirely on social engineering through the body text. This is consistent with BEC methodology — attackers deliberately avoid technical payloads to evade URL filtering, sandboxing, and antivirus controls. The primary attack vector was psychological manipulation, not technical exploitation.
+Email 2 (vendor follow-up) references an invoice attachment: Invoice_MFS_Q4_2023_047.pdf. This filename is consistent with the reference number INV-MFS-Q4-2023-047 cited throughout the chain, suggesting it was crafted to appear as a legitimate overdue invoice. No attachment was confirmed as physically present in the visible header data — the reference appears in the email body only. In a full .eml analysis, the MIME structure would need to be examined to confirm whether the file was actually attached or merely referenced to add credibility.
+
+<img width="975" height="107" alt="image" src="https://github.com/user-attachments/assets/09da64bf-22e5-4d7a-9a22-13da91c84590" />
+
+No hyperlinks were present in the body text of any of the three emails. The attack relied entirely on social engineering and wire transfer instructions rather than malicious URLs, which is characteristic of BEC campaigns. They typically avoid links to evade URL-scanning gateways.
+
+Without confirmed extraction of the PDF attachment from the .eml file, a file hash (MD5/SHA-256) cannot be computed at this stage. If the attachment is confirmed present, the hash should be submitted to VirusTotal and cross-referenced against known malware repositories. The filename itself (Invoice_MFS_Q4_2023_047.pdf) should be treated as an IOC regardless.
 
 ---
 
@@ -99,22 +105,16 @@ Evidence of extensive reconnaissance:
 
 Supporting techniques: **authority bias** (C-level impersonation), **urgency pressure**, and **social proof** (vendor email corroborating the CFO's request).
 
-![Email body text showing urgency and authority cues](screenshots/06_social_engineering_body.png)
-*Screenshot: Email body from Email1 or Email3 highlighting the urgency language and CFO impersonation*
-
 ---
 
 ### 7. WHOIS Registration & Domain Age
 
-WHOIS lookups for `smtp.webmailpro.xyz` and the lookalike domains returned no results. Two likely explanations:
+WHOIS lookups for `nexus-Iogistics.com` and `meridianfreight-solutions.net` returned no results. Two likely explanations:
 
 - **Ephemeral domains** — registered specifically for this campaign and taken down or allowed to expire after use. Common practice for disposable phishing infrastructure.
 - **WHOIS redaction** — privacy-protected registration obscuring the details.
 
 Either outcome is consistent with freshly registered phishing infrastructure designed for short-lived, single-campaign use.
-
-![WHOIS lookup result for the lookalike domain](screenshots/07_whois_lookup.png)
-*Screenshot: WHOIS lookup showing no results or redacted registration for smtp.webmailpro.xyz*
 
 ---
 
@@ -127,14 +127,13 @@ Two red flags:
 - The Bat! is a personal desktop email client, not a corporate mail server. No mid-sized logistics company would send CFO-level financial communications from a personal client.
 - **(UNREG)** indicates an unregistered, unlicensed copy of the software — inconsistent with legitimate corporate operations.
 
-![X-Mailer header value](screenshots/08_xmailer_header.png)
-*Screenshot: Raw header showing X-Mailer: The Bat! 10.3 (UNREG)*
+<img width="975" height="183" alt="image" src="https://github.com/user-attachments/assets/77754b85-2103-422b-8771-2142bbce612c" />
 
 ---
 
 ### 9. Thread Hijacking Assessment
 
-The email chain does not exhibit thread hijacking. Thread hijacking occurs when an attacker injects a reply into a legitimate existing thread to leverage established trust.
+The email chain does not technically exhibit thread hijacking. Thread hijacking occurs when an attacker injects a reply into a legitimate existing thread to leverage established trust.
 
 Evidence against thread hijacking in this case:
 
@@ -170,7 +169,11 @@ See the full technique mapping with evidence breakdown in [Forensic_Report.md](F
 | Domain — Lookalike | `meridianfreight-solutions.net` |
 | Email | `j.hargrove@nexus-logistics.com` |
 | Email | `billing@meridianfreight-solutions.net` |
-| File Hashes | None — no attachments present |
+| Email | `j.hargrove.cfo@gmail.com` |
+| Email | `bounce@smtp.webmailpro.xyz` |
+| File Hashes | `Invoice_MFS_Q4_2023_047.pdf` |
+| Bank Account | `4782910365 / Routing 084201278` |
+| Reference | `INV-MFS-Q4-2023-047` |
 
 See the full IOC table with classifications and confidence levels in [Forensic_Report.md](Forensic_Report.md#️-indicators-of-compromise-ioc-table).
 
