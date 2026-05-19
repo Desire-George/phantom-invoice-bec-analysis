@@ -1,4 +1,4 @@
-<img width="975" height="183" alt="image" src="https://github.com/user-attachments/assets/6e41d1eb-72e8-43a9-a28e-f55f7fa10d53" /># 📧 Operation: Phantom Invoice — BEC Forensic Analysis
+# 📧 Operation: Phantom Invoice — BEC Forensic Analysis
 
 ## 🗂️ Overview
 
@@ -145,14 +145,13 @@ Evidence against thread hijacking in this case:
 
 ### 10. MITRE ATT&CK Classification
 
-| Tactic | T-Code | Technique |
+| T-Code | Technique | Application |
 |--------|--------|-----------|
-| TA0043 Reconnaissance | T1589 (.001 .002 .003) | Gather Victim Identity Information |
-| TA0043 Reconnaissance | T1591 (.002 .004) | Gather Victim Org Information |
-| TA0042 Resource Development | T1583 | Acquire Infrastructure |
-| TA0042 Resource Development | T1683 / .001 | Generate Written Content |
-| TA0001 Initial Access | T1566 / .002 | Spear-Phishing |
-| TA0040 Impact | T1657 | Financial Theft (BEC) |
+| T1566.001 | Spearphishing via Attachment | Invoice PDF in Email 2 |
+| T1036.005 | Masquerading – Match Legitimate Name | nexus-Iogistics.com spoofing |
+| T1585.001 | Establish Accounts – Email Accounts | Gmail and webmailpro.xyz accounts |
+| T1534 | Internal Spearphishing (BEC pattern) | CFO-to-employee wire fraud |
+| T1656 | Impersonation | CFO and vendor accounts impersonated |
 
 See the full technique mapping with evidence breakdown in [Forensic_Report.md](Forensic_Report.md#️-mitre-attck-technique-mapping).
 
